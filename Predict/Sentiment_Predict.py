@@ -15,9 +15,6 @@ data = data[data.sentiment != "Neutral"]
 data['text'] = data['text'].apply(lambda x: x.lower())
 data['text'] = data['text'].apply((lambda x: re.sub('[^a-zA-z0-9\s]', '', x)))
 
-print(data[ data['sentiment'] == 'Positive'].size)
-print(data[ data['sentiment'] == 'Negative'].size)
-
 for idx, row in data.iterrows():
     row[0] = row[0].replace('rt', ' ')
 
@@ -32,7 +29,6 @@ from keras.models import load_model
 
 model = Sequential()
 model = load_model("senti.h5")
-
 
 twt = ['Electronic Transactions Association Proposes 7 Guiding Principles for a Digital Dollar']
 
