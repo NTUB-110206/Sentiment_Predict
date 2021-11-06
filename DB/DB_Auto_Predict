@@ -1,0 +1,71 @@
+import psycopg2
+import numpy as np
+import pandas as pd
+import psycopg2
+
+from sklearn.feature_extraction.text import CountVectorizer
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+from keras.models import Sequential
+from keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
+from sklearn.model_selection import train_test_split
+from keras.utils.np_utils import to_categorical
+import re
+from keras.models import load_model
+
+conn = psycopg2.connect(database = "database",
+             user = "user", 
+             password = "pwd", 
+             host = "host", 
+             port = "port"
+             )
+
+twt = ['']
+
+cur = conn.cursor()
+
+cur.execute("SELECT news_id, news_content, news_title FROM public.bcd_news")
+
+rows = cur.fetchall()
+
+#UPDATE customers SET Phone='03-87654321' WHERE Name='王二';
+#cursor.execute("INSERT INTO table VALUES (?, ?, ?)", (var1, var2, var3))
+
+for row in rows:
+  num = row[0]
+  if len(row[1]) == 0:
+    twt = row[2]
+    twt = Tokenizer.texts_to_sequences(twt)
+    twt = pad_sequences(twt, maxlen = 28, dtype = 'int32', value = 0)
+    sentiment = model.predict(twt, batch_size = 1, verbose = 2)[0]
+    if(np.argmax(sentiment) == 0):
+      print("負面")
+      sql = "UPDATE public.bcd_news SET trend = '1' WHERE news_id = %d;" % num
+      cur.execute(sql)
+      conn.commit()
+    elif (np.argmax(sentiment) == 1):
+      print("正面")
+      sql = "UPDATE public.bcd_news SET trend = '0' WHERE news_id = %d;" % num
+      cur.execute(sql)
+      conn.commit()
+    continue
+  
+  twt = row[1]
+  twt = tokenizer.texts_to_sequences(twt)
+  twt = pad_sequences(twt, maxlen = 28, dtype = 'int32', value = 0)
+  sentiment = model.predict(twt, batch_size = 1, verbose = 2)[0]
+  if(np.argmax(sentiment) == 0):
+    print(num)
+    print("負面")
+    #UPDATE public.bcd_news SET trend = NULL WHERE news_id = 1000000008;
+    sql = "UPDATE public.bcd_news SET trend = '1' WHERE news_id = %d;" % num
+    cur.execute(sql)
+    conn.commit()
+  elif (np.argmax(sentiment) == 1):
+    print(num)
+    print("正面")
+    sql = "UPDATE public.bcd_news SET trend = '0' WHERE news_id = %d;" % num
+    cur.execute(sql)
+    conn.commit()
+
+conn.close()
