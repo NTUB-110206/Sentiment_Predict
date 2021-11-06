@@ -1,3 +1,18 @@
+# How To Use psycopg2 connect pgSQL
+"""
+# 方法一: 使用pymsql.connect方法
+import pymysql
+
+# Connect to the database
+eng = pymysql.connect(
+    host='localhost',   # host:資料庫地址/本機使用localhost
+    user='user',      # user:使用者名稱
+    password='passwd',   # password:密碼
+    db='db',        # db:資料庫名             
+    charset='utf8'     # charset:資料庫編碼 # charset='utf8'是解決中文亂碼
+    )
+"""
+
 import psycopg2
 import numpy as np
 import pandas as pd
