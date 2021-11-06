@@ -10,6 +10,9 @@ from sklearn.model_selection import train_test_split
 from keras.utils.np_utils import to_categorical
 import re
 
+data = pd.read_csv('Sentiment.csv')
+data = data[['text', 'sentiment']]
+
 #正負面詞彙資料集整理
 data = data[data.sentiment != "Neutral"]
 data['text'] = data['text'].apply(lambda x: x.lower())
@@ -35,7 +38,7 @@ twt = ['Electronic Transactions Association Proposes 7 Guiding Principles for a 
 twt = tokenizer.texts_to_sequences(twt)
 
 twt = pad_sequences(twt, maxlen = 28, dtype = 'int32', value = 0)
-print(twt)
+# print(twt)
 sentiment = model.predict(twt,batch_size=1,verbose = 2)[0]
 if(np.argmax(sentiment) == 0):
     print("負面")
